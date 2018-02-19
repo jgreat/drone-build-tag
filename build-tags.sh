@@ -23,6 +23,10 @@ elif [ -f "./.version" ]; then
   # a version file
   VERSION=$(echo ./.version)
   echo "Found .version file"
+elif [ -f "./pom.xml" ]; then
+  # a maven pom file
+  VERSION=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='version']/text()" pom.xml )
+  echo "Found pom.xml file"
 elif [ -f "./Dockerfile" ]; then
   # from APPLICATION_VERSION in Docker file
   VERSION=$(grep 'ENV APPLICATION_VERSION' Dockerfile | awk '{print $3}')
