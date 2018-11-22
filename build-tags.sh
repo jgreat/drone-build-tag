@@ -58,6 +58,6 @@ if [ "${INCLUDE_FEATURE_TAG}" == "true" ]; then
   TAGS+=("${VERSION}-${COMMIT_DATE}.${COMMIT_BRANCH}.${COMMIT_SHA}")
 fi
 
-echo "Writing tags to .env file:"
-echo " - PLUGIN_TAGS=$(join_by , ${TAGS[*]})"
-echo "PLUGIN_TAGS=$(join_by , ${TAGS[*]})" >> .env
+echo "Writing tags to .tags file:"
+echo "$(join_by , ${TAGS[*]})"
+echo "$(join_by , ${TAGS[*]})" >> .tags

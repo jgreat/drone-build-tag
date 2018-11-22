@@ -1,7 +1,7 @@
 FROM alpine:latest
-ENV APPLICATION_VERSION 0.0.1
+ENV APPLICATION_VERSION 0.0.3
 
-RUN apk add --no-cache jq bash git
+RUN apk add --no-cache jq bash git coreutils
 
 ADD ./build-tags.sh /bin
 
