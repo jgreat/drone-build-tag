@@ -33,19 +33,21 @@ else
 fi
 
 # date is unix time stamp for commit
-COMMIT_DATE=$(git --no-pager log -1 --format='%ct')
+COMMIT_DATE=$(git --no-pager log -1 --format='%cI' | date +"%Y%m%d.%H%M%S" -f -)
+COMMIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+COMMIT_SHA=$(git --no-pager log -1 --format='%h')
 
 echo "VERSION: ${VERSION}"
 echo "COMMIT_DATE: ${COMMIT_DATE}"
-echo "DRONE_COMMIT_BRANCH: ${DRONE_COMMIT_BRANCH}"
-echo "DRONE_COMMIT_SHA: ${DRONE_COMMIT_SHA:0:7}"
+echo "COMMIT_BRANCH: ${COMMIT_BRANCH}"
+echo "COMMIT_SHA: ${COMMIT_SHA}"
 
-if [ "${DRONE_COMMIT_BRANCH}" != "master" ]; then
+if [ "${COMMIT_BRANCH}" != "master" ]; then
   INCLUDE_FEATURE_TAG="true"
 fi
 
 TAGS=()
-if [ "${DRONE_COMMIT_BRANCH}" == "master" ]; then
+if [ "${COMMIT_BRANCH}" == "master" ]; then
   echo "Writing master style tags"
   TAGS+=("${VERSION}")
   TAGS+=("latest")
@@ -53,11 +55,9 @@ fi
 
 if [ "${INCLUDE_FEATURE_TAG}" == "true" ]; then
   echo "Writing feature style tag"
-  TAGS+=("${VERSION}-${COMMIT_DATE}.${DRONE_COMMIT_BRANCH}.${DRONE_COMMIT_SHA:0:7}")
+  TAGS+=("${VERSION}-${COMMIT_DATE}.${COMMIT_BRANCH}.${COMMIT_SHA}")
 fi
 
 echo "Writing tags to .env file:"
 echo " - PLUGIN_TAGS=$(join_by , ${TAGS[*]})"
-echo "PLUGIN_TAGS=$(join_by , ${TAGS[*]})" > .env
-echo " - DRONE_BUILD_NUMBER=${COMMIT_DATE}"
-echo "DRONE_BUILD_NUMBER=${COMMIT_DATE}" >> .env
+echo "PLUGIN_TAGS=$(join_by , ${TAGS[*]})" >> .env
