@@ -32,9 +32,21 @@ else
   exit 1
 fi
 
+# Use drone or rancher-pipeline branch var
+if [ "${DRONE_COMMIT_BRANCH}" ]; then
+  COMMIT_BRANCH=$DRONE_COMMIT_BRANCH
+fi
+
+if [ "${CICD_GIT_BRANCH}" ]; then
+  COMMIT_BRANCH=$CICD_GIT_BRANCH
+fi
+
+if [ -z "${COMMIT_BRANCH}" ]; then
+  COMMIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+fi
+
 # date is unix time stamp for commit
-COMMIT_DATE=$(git --no-pager log -1 --format='%cI' | date +"%Y%m%d.%H%M%S" -f -)
-COMMIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+COMMIT_DATE=$(git --no-pager log -1 --format='%ct')
 COMMIT_SHA=$(git --no-pager log -1 --format='%h')
 
 echo "VERSION: ${VERSION}"
